@@ -1,0 +1,309 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard · Transformación IA Jamar</title>
+<style>
+  :root{
+    --ink:#14293D; --petrol:#0E7C7B; --petrol-d:#0B5E5D;
+    --amber:#C77D0A; --green:#2E7D52; --red:#B23A48; --slate:#5B6B7B;
+    --line:#E2E8EE; --bg:#EDF1F4; --card:#FFFFFF; --soft:#F4F7F9;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.45;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 20px 70px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--petrol);font-weight:600}
+  header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;
+    border-bottom:2px solid var(--ink);padding-bottom:18px;margin-bottom:20px}
+  h1{margin:6px 0 2px;font-size:29px;letter-spacing:-.02em;font-weight:800}
+  .sub{color:var(--slate);font-size:14px}
+  .topright{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .savechip{font-family:var(--mono);font-size:11px;color:var(--slate);display:flex;align-items:center;gap:7px;
+    background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(46,125,82,.18);transition:.2s}
+  .wkbox{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12px;color:var(--slate)}
+  .wkbox input{width:46px;border:1px solid var(--line);border-radius:6px;padding:3px 6px;font-family:var(--mono);font-size:12px;text-align:center}
+  .btn{font-family:var(--sans);font-size:12.5px;font-weight:600;border:1px solid var(--line);background:var(--card);
+    color:var(--ink);border-radius:8px;padding:8px 13px;cursor:pointer;transition:.15s}
+  .btn:hover{border-color:var(--petrol);color:var(--petrol)}
+  .btn.solid{background:var(--petrol);color:#fff;border-color:var(--petrol)}
+  .btn.solid:hover{background:var(--petrol-d);color:#fff}
+  .btn.sm{padding:5px 10px;font-size:11.5px}
+  :focus-visible{outline:2px solid var(--petrol);outline-offset:2px}
+  .tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+  .tab{font-family:var(--sans);font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--card);
+    color:var(--slate);border-radius:10px;padding:10px 16px;cursor:pointer;display:flex;align-items:center;gap:8px}
+  .tab .n{font-family:var(--mono);font-size:11px;opacity:.7}
+  .tab[aria-selected="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .kpis{display:grid;gap:13px;margin-bottom:20px}
+  .k5{grid-template-columns:1.25fr 1fr 1fr 1fr 1.3fr}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 16px}
+  .klabel{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
+  .kbig{font-size:27px;font-weight:800;letter-spacing:-.02em;margin-top:4px}
+  .kbig small{font-size:14px;font-weight:600;color:var(--slate)}
+  .ring{display:flex;align-items:center;gap:15px}
+  .ringtxt{font-size:27px;font-weight:800;letter-spacing:-.02em}
+  .ringsub{font-size:12px;color:var(--slate)}
+  .next{font-size:13.5px;font-weight:700;line-height:1.25;margin-top:5px}
+  .nextdate{font-family:var(--mono);font-size:11px;color:var(--petrol);margin-top:3px;letter-spacing:.04em}
+  .section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 16px;margin-bottom:16px}
+  .section h2{font-size:13px;font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink);margin:0 0 14px}
+  .secbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .secbar h2{margin:0}
+  .hide{display:none}
+  .muted{color:var(--slate);font-size:12px}
+  .frow{display:grid;grid-template-columns:1fr 150px 150px 110px;gap:14px;align-items:center;padding:12px 8px;border-bottom:1px solid var(--line)}
+  .frow:last-child{border-bottom:none}
+  .frow.head{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);padding-bottom:8px}
+  .fname{font-weight:700;font-size:13.5px;line-height:1.3}
+  .fmeta{font-size:11.5px;color:var(--slate);margin-top:2px}
+  .track{height:8px;background:var(--soft);border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+  .fill{height:100%;border-radius:999px;transition:width .5s ease}
+  .pct{font-family:var(--mono);font-size:12px;font-weight:700}
+  .lnk{font-family:var(--sans);font-size:12px;font-weight:600;color:var(--petrol);background:none;border:none;cursor:pointer;padding:0;text-align:right}
+  .lnk:hover{text-decoration:underline}
+  .tlwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+  table.tl{border-collapse:collapse;min-width:100%}
+  table.tl th,table.tl td{border:1px solid var(--line);padding:0}
+  table.tl th{font-family:var(--mono);font-size:10px;color:var(--slate);font-weight:600;padding:6px 4px;background:var(--soft);text-align:center;min-width:34px}
+  table.tl th.fr{text-align:left;padding:8px 10px;position:sticky;left:0;background:var(--soft);z-index:2;min-width:210px}
+  table.tl td.fr{font-size:12px;font-weight:600;padding:7px 10px;position:sticky;left:0;background:var(--card);z-index:1;min-width:210px}
+  table.tl td.cell{height:28px;text-align:center;font-size:9px;color:#fff}
+  table.tl td.now{box-shadow:inset 0 0 0 2px var(--ink)}
+  .cap{font-size:11px;color:var(--slate);margin-top:8px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .swatch{display:inline-flex;align-items:center;gap:5px}
+  .swatch i{width:11px;height:11px;border-radius:3px;display:inline-block}
+  table.gt{width:100%;border-collapse:collapse;font-size:12.5px}
+  table.gt th{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--slate);text-align:left;padding:9px 7px;border-bottom:2px solid var(--line);white-space:nowrap}
+  table.gt td{padding:7px 7px;border-bottom:1px solid var(--line);vertical-align:middle}
+  table.gt tr:last-child td{border-bottom:none}
+  input.cell,select.cell{font-family:var(--sans);font-size:12.5px;border:1px solid transparent;background:transparent;border-radius:6px;padding:5px 6px;width:100%;color:var(--ink)}
+  input.cell:hover,select.cell:hover{border-color:var(--line);background:var(--soft)}
+  input.cell:focus,select.cell:focus{border-color:var(--petrol);background:#fff;outline:none}
+  input.num{width:58px;text-align:center;font-family:var(--mono)}
+  input.dt{width:128px;font-family:var(--mono);font-size:12px}
+  .stbtn{font-family:var(--sans);font-size:11.5px;font-weight:700;border:1.5px solid;border-radius:7px;padding:5px 8px;cursor:pointer;background:#fff;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .stbtn .sdot{width:8px;height:8px;border-radius:50%}
+  .pill{font-size:10px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:999px;color:#fff;white-space:nowrap}
+  .delx{border:none;background:none;color:var(--slate);cursor:pointer;font-size:15px;line-height:1;padding:4px 6px;border-radius:6px}
+  .delx:hover{color:var(--red);background:rgba(178,58,72,.08)}
+  .fcard{border:1px solid var(--line);border-radius:12px;margin-bottom:14px;overflow:hidden}
+  .fhead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;background:var(--soft);border-bottom:1px solid var(--line)}
+  .fhead .ft{font-weight:700;font-size:13.5px}
+  .fhead .fp{font-family:var(--mono);font-size:11px;color:var(--slate)}
+  .arow{display:grid;grid-template-columns:64px 1fr 150px 1.1fr 34px;gap:10px;align-items:center;padding:8px 14px;border-bottom:1px solid var(--line)}
+  .arow:last-child{border-bottom:none}
+  .arow.h{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);padding-top:9px;padding-bottom:6px}
+  .filterbar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+  .chip{font-family:var(--mono);font-size:11px;letter-spacing:.03em;border:1px solid var(--line);background:var(--card);color:var(--slate);border-radius:999px;padding:6px 12px;cursor:pointer}
+  .chip[aria-pressed="true"]{background:var(--petrol);color:#fff;border-color:var(--petrol)}
+  .rcard{border:1px solid var(--line);border-radius:12px;margin-bottom:14px;overflow:hidden}
+  .rhead{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;padding:12px 14px;background:var(--soft);border-bottom:1px solid var(--line)}
+  .rf{display:flex;flex-direction:column;gap:4px}
+  .rf.grow{flex:1;min-width:200px}
+  .rf label{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate)}
+  .rf input,.rf select{border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 8px;font-family:var(--sans);font-size:12.5px;color:var(--ink)}
+  .rf input:focus,.rf select:focus{outline:none;border-color:var(--petrol)}
+  .hwrap{display:flex;align-items:center;gap:4px;font-size:13px}
+  .hwrap b{font-family:var(--mono);font-size:14px}
+  .hwrap input{width:62px;text-align:center;font-family:var(--mono)}
+  .rbar{height:7px;width:160px;background:#fff;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:5px}
+  .rbar i{display:block;height:100%;border-radius:999px;transition:width .4s ease}
+  .rbtns{display:flex;gap:8px;align-items:center;margin-left:auto}
+  .initwrap{padding:2px 0}
+  .initrow{display:grid;grid-template-columns:1fr 92px 110px 34px;gap:10px;align-items:center;padding:7px 14px;border-bottom:1px solid var(--line)}
+  .initrow:last-child{border-bottom:none}
+  .initrow.h{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);padding-top:9px;padding-bottom:5px}
+  .initrow input{border:1px solid transparent;background:transparent;border-radius:6px;padding:5px 6px;font-family:var(--sans);font-size:12.5px;color:var(--ink);width:100%}
+  .initrow input:hover{border-color:var(--line);background:#fff}
+  .initrow input:focus{outline:none;border-color:var(--petrol);background:#fff}
+  .initrow .num{text-align:center;font-family:var(--mono)}
+  .foot{margin-top:18px;font-size:12px;color:var(--slate);text-align:center;line-height:1.6}
+  .banner{background:rgba(199,125,10,.10);border:1px solid rgba(199,125,10,.35);color:#7a4d06;border-radius:10px;padding:11px 14px;font-size:12.5px;margin-bottom:14px}
+  @media (max-width:820px){
+    .k5{grid-template-columns:1fr 1fr}
+    .frow{grid-template-columns:1fr;gap:7px}
+    .frow.head{display:none}
+    .arow{grid-template-columns:1fr 1fr}
+    .arow.h{display:none}
+  }
+  .actabar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  #acta{font-family:var(--sans);color:var(--ink)}
+  .a-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--petrol);font-weight:600}
+  .a-title{font-size:23px;font-weight:800;border:1px solid transparent;width:100%;color:var(--ink);padding:4px 4px;letter-spacing:-.01em;margin-top:4px;border-radius:7px}
+  .a-title:hover{border-color:var(--line)} .a-title:focus{outline:none;border-color:var(--petrol)}
+  .a-meta{display:flex;flex-wrap:wrap;gap:18px;margin:8px 0 4px;padding-bottom:14px;border-bottom:2px solid var(--ink)}
+  .a-mf{display:flex;flex-direction:column;gap:3px}
+  .a-mf label{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate)}
+  .a-mf input,.a-prox{border:1px solid var(--line);border-radius:6px;padding:5px 7px;font-size:13px;font-family:var(--sans);color:var(--ink);min-width:150px}
+  .a-mf input:focus,.a-prox:focus{outline:none;border-color:var(--petrol)}
+  .a-sec{margin-top:20px}
+  .a-sec h3{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+  .a-row{display:grid;gap:10px;align-items:center;padding:4px 0;border-bottom:1px solid var(--line)}
+  .a-row:last-child{border-bottom:none}
+  .a-row input{border:1px solid transparent;background:transparent;border-radius:6px;padding:6px 7px;font-size:13px;font-family:var(--sans);color:var(--ink);width:100%}
+  .a-row input:hover{border-color:var(--line);background:var(--soft)}
+  .a-row input:focus{outline:none;border-color:var(--petrol);background:#fff}
+  .a-num{font-family:var(--mono);color:var(--slate);font-size:12px;text-align:right;padding-right:2px}
+  .a-part{grid-template-columns:1fr 1fr 30px}
+  .a-list{grid-template-columns:24px 1fr 30px}
+  .a-comp{grid-template-columns:1.5fr 1fr 142px 30px}
+  .a-comp-h{font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--slate);border-bottom:none}
+  .a-comp-h div{padding:0 7px}
+  @media print{
+    @page{margin:16mm}
+    body{background:#fff}
+    body *{visibility:hidden!important}
+    #acta,#acta *{visibility:visible!important}
+    #acta{position:absolute;left:0;top:0;width:100%}
+    #acta [data-act],#acta .delx{display:none!important}
+    #acta input,#acta select{border:none!important;background:transparent!important;padding:3px 0!important;color:#14293D!important;-webkit-appearance:none;appearance:none}
+    #acta .a-row{border-bottom:1px solid #E2E8EE!important;break-inside:avoid}
+    #acta .a-sec h3{justify-content:flex-start}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">Jamar · Transformación Digital con IA</div>
+      <h1>Tablero del programa</h1>
+      <div class="sub">Documento vivo 2026 · seguimiento de frentes, RIWI, detalle semanal y riesgos</div>
+    </div>
+    <div class="topright">
+      <span class="wkbox">Semana actual <input id="curWeek" type="number" min="1" max="53"></span>
+      <span class="savechip"><span class="dot" id="saveDot"></span><span id="saveTxt">Guardado</span></span>
+      <button class="btn sm" id="linkBtn" title="Auto-guardar en un archivo de tu equipo (Chrome/Edge)">Vincular archivo</button>
+      <button class="btn sm" id="exportBtn" title="Descargar copia de seguridad">Exportar</button>
+      <button class="btn sm" id="importBtn" title="Restaurar desde una copia">Importar</button>
+      <input type="file" id="importFile" accept="application/json,.json" style="display:none">
+      <button class="btn sm" id="resetBtn">Reiniciar</button>
+    </div>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true"  data-view="frentes"><span class="n">01</span> Frentes</button>
+    <button class="tab" role="tab" aria-selected="false" data-view="riwi"><span class="n">02</span> Proyecto RIWI</button>
+    <button class="tab" role="tab" aria-selected="false" data-view="detalle"><span class="n">03</span> Detalle semanal</button>
+    <button class="tab" role="tab" aria-selected="false" data-view="riesgos"><span class="n">04</span> Matriz de riesgos</button>
+    <button class="tab" role="tab" aria-selected="false" data-view="acta"><span class="n">05</span> Acta de comité</button>
+  </div>
+
+  <div id="view-frentes">
+    <section class="kpis k5" style="margin-bottom:18px">
+      <div class="card"><div class="klabel">Avance global</div>
+        <div class="ring">
+          <svg width="68" height="68" viewBox="0 0 68 68"><circle cx="34" cy="34" r="28" fill="none" stroke="#EDF1F4" stroke-width="7"/>
+          <circle id="ringArc" cx="34" cy="34" r="28" fill="none" stroke="var(--petrol)" stroke-width="7" stroke-linecap="round" transform="rotate(-90 34 34)"/></svg>
+          <div><div class="ringtxt" id="kGlobal">0%</div><div class="ringsub" id="kGlobalSub">7 frentes</div></div>
+        </div></div>
+      <div class="card"><div class="klabel">Frentes completos</div><div class="kbig"><span id="kFdone">0</span><small> / 7</small></div></div>
+      <div class="card"><div class="klabel">Acciones esta semana</div><div class="kbig" style="color:var(--amber)" id="kThisWeek">0</div></div>
+      <div class="card"><div class="klabel">Acciones atrasadas</div><div class="kbig" style="color:var(--red)" id="kLate">0</div></div>
+      <div class="card"><div class="klabel">Próxima entrega</div><div class="next" id="kNext">—</div><div class="nextdate" id="kNextW"></div></div>
+    </section>
+
+    <section class="section">
+      <h2>Seguimiento general de frentes</h2>
+      <div class="frow head"><div>Frente</div><div>Avance</div><div>Próxima acción</div><div></div></div>
+      <div id="frenteList"></div>
+    </section>
+
+    <section class="section">
+      <h2>Línea de tiempo por semana</h2>
+      <div class="tlwrap"><table class="tl" id="tlTable"></table></div>
+      <div class="cap">
+        <span class="swatch"><i style="background:var(--slate)"></i>Por iniciar</span>
+        <span class="swatch"><i style="background:var(--amber)"></i>En curso</span>
+        <span class="swatch"><i style="background:var(--green)"></i>Completado</span>
+        <span class="swatch"><i style="background:var(--red)"></i>Bloqueado</span>
+        <span class="swatch" style="margin-left:auto"><i style="box-shadow:inset 0 0 0 2px var(--ink);background:#fff"></i>Semana actual</span>
+      </div>
+    </section>
+  </div>
+
+  <div id="view-riwi" class="hide">
+    <section class="kpis k5" style="margin-bottom:18px">
+      <div class="card"><div class="klabel">RIWIs activos</div><div class="kbig" id="rActive">0</div></div>
+      <div class="card"><div class="klabel">Cumplimiento de cuota</div><div class="ring">
+        <svg width="68" height="68" viewBox="0 0 68 68"><circle cx="34" cy="34" r="28" fill="none" stroke="#EDF1F4" stroke-width="7"/>
+        <circle id="rQuotaArc" cx="34" cy="34" r="28" fill="none" stroke="var(--green)" stroke-width="7" stroke-linecap="round" transform="rotate(-90 34 34)"/></svg>
+        <div><div class="ringtxt"><span id="rQuotaNow">0</span><small style="font-size:15px;color:var(--slate)">/<span id="rQuotaMeta">0</span></small></div><div class="ringsub">meta de cuota</div></div>
+      </div></div>
+      <div class="card"><div class="klabel">Próximo ingreso</div><div class="next" id="rNext">—</div><div class="nextdate" id="rNextW"></div></div>
+      <div class="card"><div class="klabel">Horas asignadas</div><div class="kbig" id="rHours">0<small> h</small></div></div>
+      <div class="card"><div class="klabel">Revenue (opc.)</div><div class="kbig" id="rRev">—</div></div>
+    </section>
+
+    <section class="section">
+      <div class="secbar"><h2>Seguimiento del proyecto RIWI</h2>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="muted">Meta de cuota</span><input id="quotaMeta" class="cell num" type="number" min="0" style="border:1px solid var(--line)">
+          <button class="btn sm solid" data-act="add-riwi">+ Agregar RIWI</button>
+        </div></div>
+      <div id="riwiCards"></div>
+    </section>
+  </div>
+
+  <div id="view-detalle" class="hide">
+    <section class="section">
+      <div class="secbar"><h2>Detalle semana a semana por frente</h2></div>
+      <p class="muted" style="margin:-6px 0 12px">Las acciones que registres aquí alimentan el avance y la línea de tiempo de la primera pestaña.</p>
+      <div class="filterbar" id="detFilters"></div>
+      <div id="detailList"></div>
+    </section>
+  </div>
+
+  <div id="view-riesgos" class="hide">
+    <section class="section">
+      <div class="banner">Matriz de riesgos preliminar. Cuando compartas la matriz definitiva, reemplazamos estas filas y la trabajamos con el consultor. Nivel = Probabilidad × Impacto.</div>
+      <div class="secbar"><h2>Matriz de riesgos y acciones de mitigación</h2>
+        <button class="btn sm solid" data-act="add-risk">+ Agregar riesgo</button></div>
+      <div style="overflow-x:auto">
+      <table class="gt" id="riskTable">
+        <thead><tr>
+          <th>Riesgo</th><th>Prob.</th><th>Imp.</th><th>Nivel</th><th>Acción de mitigación</th><th>Stakeholders</th><th>Inicio</th><th>Fin</th><th>Estado</th><th></th>
+        </tr></thead>
+        <tbody id="riskBody"></tbody>
+      </table></div>
+    </section>
+  </div>
+
+  <div id="view-acta" class="hide">
+    <div class="actabar">
+      <div class="muted">Completa el acta y genera el PDF para enviarlo a los asistentes. Al imprimir se exporta solo el acta.</div>
+      <button class="btn solid" data-act="gen-pdf">Generar PDF</button>
+    </div>
+    <section class="section">
+      <div id="acta">
+        <div class="a-eyebrow">Acta de comité · Jamar · Transformación Digital con IA</div>
+        <input id="aTitulo" class="a-title" data-k="acta" data-f="titulo" placeholder="Título del comité">
+        <div class="a-meta">
+          <div class="a-mf"><label>Fecha</label><input id="aFecha" type="date" data-k="acta" data-f="fecha"></div>
+          <div class="a-mf"><label>Lugar / modalidad</label><input id="aLugar" data-k="acta" data-f="lugar" placeholder="Sala / Teams"></div>
+          <div class="a-mf"><label>Elaborado por</label><input id="aElab" data-k="acta" data-f="elaboradoPor" placeholder="Nombre"></div>
+        </div>
+        <div class="a-sec"><h3>Participantes <button class="btn sm solid" data-act="add-part">+ Agregar</button></h3>
+          <div id="aParts"></div></div>
+        <div class="a-sec"><h3>Temas revisados <button class="btn sm solid" data-act="add-tema">+ Agregar</button></h3>
+          <div id="aTemas"></div></div>
+        <div class="a-sec"><h3>Acuerdos y decisiones <button class="btn sm solid" data-act="add-acuerdo">+ Agregar</button></h3>
+          <div id="aAcuerdos"></div></div>
+        <div class="a-sec"><h3>Compromisos <button class="btn sm solid" data-act="add-comp">+ Agregar</button></h3>
+          <div class="a-row a-comp a-comp-h"><div>Compromiso / tarea</div><div>Responsable</div><div>Fecha</div><div></div></div>
+          <div id="aComp"></div></div>
+        <div class="a-sec"><h3>Próxima reunión</h3>
+          <input id="aProxima" type="date" data-k="acta" data-f="proxima" class="a-prox"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="foot">
+    Fechas y semanas tentativas · por confirmar con el Comité de Transformación Digital.<br>
+    Los cambios se guardan automáticamente en este tablero. Para no perder información, usa <b>Exportar</b> para descargar una copia y <b>Importar</b> para restaurarla. <b>Reiniciar</b> vuelve al estado inicial.
+  </div>
+</div>
+
+<script src="dashboard.js"></script>
